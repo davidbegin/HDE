@@ -22,6 +22,7 @@ extern crate type_printer;
 //     4. add some functions for cleaning state
 //     5. get some benchmarks
 //     6. gets some tests
+//     7. figure how to dump the schema and data
 
 fn main() {
     title();
@@ -52,24 +53,46 @@ fn main() {
         }
     };
 
-    let first_company = format!("Panerai");
-    let second_company = format!("Rolex");
-    let third_company = format!("A. Lange & Söhne");
-    let fourth_company = format!("Audemars Piguet");
-    let fifth_company = format!("IWC Schaffhausen");
-
-    let companies: Vec<String> = vec![
-        first_company,
-        second_company,
-        third_company,
-        fourth_company,
-        fifth_company
-    ];
-
-    for company in companies {
+    for company in companies::all() {
         stmt.execute(&[&company])
             .ok()
             .expect("there was a problem inserting company");
+    }
+
+    database_dumper::companies(&conn);
+}
+
+mod companies {
+    pub fn all() -> Vec<String> {
+        // I want to read these in from a CSV file,
+        // and then I want to experiment with dumping the data
+        let first_company = format!("Panerai");
+        let second_company = format!("Rolex");
+        let third_company = format!("A. Lange & Söhne");
+        let fourth_company = format!("Audemars Piguet");
+        let fifth_company = format!("IWC Schaffhausen");
+
+        // Copy (Select * From companies) To 'tmp/test.csv' With CSV;
+
+        vec![
+            first_company,
+            second_company,
+            third_company,
+            fourth_company,
+            fifth_company
+        ]
+    }
+}
+
+mod database_dumper {
+    use postgres::Connection;
+
+    // TODO: make this have a timestamp
+    // make the path configurable
+    pub fn companies(conn: &Connection) {
+        conn.execute("Copy (Select * From companies) To '/tmp/companies.csv' With CSV", &[])
+            .ok()
+            .expect("could not copy company information");
     }
 }
 
