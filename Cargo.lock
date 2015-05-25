@@ -3,6 +3,7 @@ name = "hde"
 version = "0.1.0"
 dependencies = [
  "postgres 0.8.9 (registry+https://github.com/rust-lang/crates.io-index)",
+ "type_printer 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -158,4 +159,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "rand 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "type_printer"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
