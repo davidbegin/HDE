@@ -42,5 +42,22 @@ fn main() {
     };
 
     let first_company = format!("Panerai");
-    stmt.execute(&[&first_company]).ok().expect("Dang it!");
+    let second_company = format!("Rolex");
+    let third_company = format!("Rolex");
+    let fourth_company = format!("Audemars Piguet");
+    let fifth_company = format!("IWC Schaffhausen");
+
+    let companies: Vec<String> = vec![
+        first_company,
+        second_company,
+        third_company,
+        fourth_company,
+        fifth_company
+    ];
+
+    for company in companies {
+        stmt.execute(&[&company])
+            .ok()
+            .expect("there was a problem inserting company");
+    }
 }
