@@ -75,15 +75,13 @@ mod config {
     use postgres::{Connection, SslMode};
 
     pub fn database_connection() -> Option<Connection> {
-        let connection_option = match Connection::connect(database_url(), &SslMode::None) {
+        match Connection::connect(database_url(), &SslMode::None) {
             Ok(connection_option) => Some(connection_option),
             Err(e) => {
                 println!("connection error: {:?}", e);
                 None
             }
-        };
-
-        connection_option
+        }
     }
 
     fn database_url() -> &'static str {
