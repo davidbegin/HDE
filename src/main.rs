@@ -35,6 +35,8 @@ fn main() {
         }
     };
 
+    database_cleaner::clear_companies(&conn);
+
     conn.execute("
         CREATE TABLE IF NOT EXISTS companies (
             id serial primary key,
@@ -52,7 +54,7 @@ fn main() {
 
     let first_company = format!("Panerai");
     let second_company = format!("Rolex");
-    let third_company = format!("Rolex");
+    let third_company = format!("A. Lange & Söhne");
     let fourth_company = format!("Audemars Piguet");
     let fifth_company = format!("IWC Schaffhausen");
 
@@ -68,6 +70,15 @@ fn main() {
         stmt.execute(&[&company])
             .ok()
             .expect("there was a problem inserting company");
+    }
+}
+
+mod database_cleaner {
+    use postgres::Connection;
+
+    pub fn clear_companies(conn: &Connection) {
+        println!("Deleting all companies...");
+        conn.execute("DELETE FROM companies", &[]).ok().expect("could not delete companies");
     }
 }
 
