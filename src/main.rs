@@ -36,14 +36,8 @@ fn main() {
         }
     };
 
+    database_creator::create_companies_table(&conn);
     database_cleaner::clear_companies(&conn);
-
-    conn.execute("
-        CREATE TABLE IF NOT EXISTS companies (
-            id serial primary key,
-            name text
-        )
-    ", &[]).ok().expect("could not create companies table");
 
     let stmt = match conn.prepare("insert into companies (name) values ($1)") {
         Ok(stmt) => stmt,
@@ -84,13 +78,26 @@ mod companies {
     }
 }
 
+mod database_creator {
+    use postgres::Connection;
+
+    pub fn create_companies_table(conn: &Connection) {
+        conn.execute("
+            CREATE TABLE IF NOT EXISTS companies (
+                id serial primary key,
+                name text
+            )",
+        &[]).ok().expect("could not create companies table");
+    }
+}
+
 mod database_dumper {
     use postgres::Connection;
 
     // TODO: make this have a timestamp
     // make the path configurable
     pub fn companies(conn: &Connection) {
-        conn.execute("Copy (Select * From companies) To '/tmp/companies.csv' With CSV", &[])
+        conn.execute("Copy (Select * From companies) To '/Users/dbegin/rust/hde/dump/companies.csv' With CSV", &[])
             .ok()
             .expect("could not copy company information");
     }
