@@ -40,3 +40,27 @@ pub fn print_all_companies(conn: &Connection) {
         println!("\n-------------------------------------\n");
     }
 }
+
+pub fn print_all_watches(conn: &Connection) {
+    let stmt = match conn.prepare("SELECT * FROM watches") {
+        Ok(stmt) => stmt,
+        Err(e) => {
+            println!("There was an Error: {:?}", e);
+            return;
+        }
+    };
+
+    let result = stmt.query(&[]).ok().expect("dang it");
+
+    for row in result {
+        let id: i32              = row.get("id");
+        let name: String         = row.get("name");
+        let reference_id: String = row.get("reference_id");
+        let year: i16            = row.get("year");
+        println!("Reference ID: {}", reference_id);
+        println!("Name: {}", name);
+        println!("Year: {}", year);
+        println!("\n-------------------------------------\n");
+    }
+
+}
