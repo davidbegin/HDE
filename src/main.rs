@@ -37,11 +37,35 @@ fn main() {
         }
     };
 
-    database_creator::create_companies_table(&conn);
-    database_cleaner::clear_companies(&conn);
-    database_seeder::seed_companies(&conn);
-    database_dumper::companies(&conn);
-    database_cleaner::drop_companies_table(&conn);
+    // database_creator::create_companies_table(&conn);
+    // database_seeder::seed_companies(&conn);
+    // database_dumper::companies(&conn);
+    // database_cleaner::clear_companies(&conn);
+    // database_cleaner::drop_companies_table(&conn);
+    database_querier::select_all_companies(&conn);
+}
+
+mod database_querier {
+    use postgres::Connection;
+    use type_printer;
+
+    pub fn select_all_companies(conn: &Connection) {
+        let stmt = match conn.prepare("SELECT * FROM companies") {
+            Ok(stmt) => stmt,
+            Err(e) => {
+                return;
+            }
+        };
+
+        let result = stmt.query(&[]).ok().expect("dang it");
+
+        for row in result {
+            let name: String = row.get("name");
+            println!("name: {:?}", name);
+        }
+
+        println!("all companies");
+    }
 }
 
 mod database_seeder {
@@ -156,6 +180,7 @@ mod tests {
     use config;
     use database_creator;
     use postgres::Connection;
+    use type_printer;
 
     #[test]
     fn it_can_be_tested() {
@@ -176,18 +201,18 @@ mod tests {
 
         before_each(&conn);
 
-        let result = conn.execute("SELECT * FROM companies", &[])
-            .ok()
-            .expect("there was a problem querying");
+        let stmt = match conn.prepare("SELECT * FROM companies") {
+            Ok(stmt) => stmt,
+            Err(e) => {
+                return;
+            }
+        };
 
-        assert_eq!(true, true);
+        // try!(conn.prepare("SELECT * FROM companies"));
 
-
-        // let stmt = try!(conn.prepare("SELECT bar, baz FROM foo"));
         // for row in try!(stmt.query(&[])) {
-        //     let bar: i32 = row.get(0);
-        //     let baz: String = row.get("baz");
-        //     println!("bar: {}, baz: {}", bar, baz);
+        //     let name = row.get("name");
+        //     println!("Companies: {:?}", name);
         // }
     }
 
