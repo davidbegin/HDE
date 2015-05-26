@@ -12,3 +12,15 @@ pub fn create_companies_table(conn: &Connection) {
         )",
     &[]).ok().expect("could not create companies table");
 }
+
+pub fn create_watches_table(conn: &Connection) {
+    conn.execute("
+        CREATE TABLE IF NOT EXISTS watches (
+            id SERIAL PRIMARY KEY,
+            reference_id text,
+            year smallint,
+            name TEXT
+        )
+    ",
+    &[]).ok().expect("could not create watches table");
+}

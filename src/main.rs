@@ -22,10 +22,12 @@ fn main() {
 
     database_cleaner::drop_companies_table(&conn);
     database_creator::create_companies_table(&conn);
+    database_creator::create_watches_table(&conn);
     database_seeder::seed_companies(&conn);
+    database_seeder::seed_watches(&conn);
 
     // database_cleaner::clear_companies(&conn);
-    // database_dumper::companies(&conn);
+    database_dumper::companies(&conn);
 
     database_querier::print_all_companies(&conn);
 }
