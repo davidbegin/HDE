@@ -15,3 +15,9 @@ pub fn watches(conn: &Connection) {
         .ok()
         .expect("could not copy watch information");
 }
+
+pub fn movements(conn: &Connection) {
+    conn.execute("Copy (SELECT * FROM movements) TO '/Users/dbegin/rust/hde/dump/movements.csv' WITH CSV", &[])
+        .ok()
+        .expect("could not copy movement information");
+}

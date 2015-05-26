@@ -1,5 +1,23 @@
 use postgres::Connection;
 
+mod movements {
+    pub fn all() -> Vec<String> {
+        let first_movement = "1030".to_string();
+        let second_movement = "P.2003".to_string();
+        let third_movement = "L121.1".to_string();
+        let fourth_movement = "52010".to_string();
+        let fifth_movement = "3120".to_string();
+
+        vec![
+            first_movement,
+            second_movement,
+            third_movement,
+            fourth_movement,
+            fifth_movement,
+        ]
+    }
+}
+
 mod companies {
     pub fn all() -> Vec<(String, i16)> {
         let first_company = ("Panerai".to_string(), 1860i16);
@@ -20,22 +38,33 @@ mod companies {
 
 mod watches {
     pub fn all() -> Vec<(String, i16, String)> {
+        // 1030 movement
         let first_watch = ("6541".to_string(), 1958i16, "Milguass".to_string());
+
+        // P.2003
         let second_watch = (
             "PAM00335".to_string(),
             2015,
             "Luminor 1950 10 Days Black Dial Ceramic Black".to_string()
         );
+
+        // L121.1
         let third_watch = (
             "101.021".to_string(),
             2015,
             "Lange 1".to_string()
         );
+
+        // 5007 is the watch 03 is coloring
+        // maybe a good watch to test out the waters of splitting on variation
+        // 52010
         let fourth_watch = (
             "IW500703".to_string(),
             2015,
             "Portugieser Automatic".to_string()
         );
+
+        // 3120
         let fifth_watch = (
             "15400ST.OO.1220ST.01".to_string(),
             2015,
@@ -74,7 +103,7 @@ pub fn seed_watches(conn: &Connection) {
     let insert_watch = match conn.prepare("INSERT INTO watches (reference_id, year, name) VALUES ($1, $2, $3)") {
         Ok(insert_watch) => insert_watch,
         Err(e) => {
-            println!("haveing trouble preparing to insert watch");
+            println!("having trouble preparing to insert watch");
             return;
         }
     };
@@ -85,5 +114,19 @@ pub fn seed_watches(conn: &Connection) {
         insert_watch.execute(&[&reference_id, &year, &name])
             .ok()
             .expect("there was a problem inserting a watch");
+    }
+}
+
+pub fn seed_movements(conn: &Connection) {
+    let insert_movement = match conn.prepare("INSERT INTO movements (calibre_id) VALUES ($1)") {
+        Ok(insert_movement) => insert_movement,
+        Err(e) => {
+            println!("having trouble preparing to insert a movement");
+            return;
+        }
+    };
+
+    for calibre_id in movements::all() {
+        insert_movement.execute(&[&calibre_id]).ok().expect("having trouble inserting a movement");
     }
 }

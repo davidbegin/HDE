@@ -64,3 +64,22 @@ pub fn print_all_watches(conn: &Connection) {
     }
 
 }
+
+pub fn print_all_movements(conn: &Connection) {
+    let stmt = match conn.prepare("SELECT * FROM movements") {
+        Ok(stmt) => stmt,
+        Err(e) => {
+            println!("There was an error: {:?}", e);
+            return;
+        }
+    };
+
+    let result = stmt.query(&[]).ok().expect("dang it");
+
+    for row in result {
+        let id: i32 = row.get("id");
+        let calibre_id: String = row.get("calibre_id");
+
+        println!("Calibre ID: {:?}", calibre_id);
+    }
+}
