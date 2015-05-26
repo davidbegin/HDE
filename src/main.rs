@@ -201,6 +201,7 @@ fn title() {
 mod tests {
     use config;
     use database_creator;
+    use database_querier;
     use postgres::Connection;
     use type_printer;
 
@@ -222,20 +223,11 @@ mod tests {
         };
 
         before_each(&conn);
-
-        let stmt = match conn.prepare("SELECT * FROM companies") {
-            Ok(stmt) => stmt,
-            Err(e) => {
-                return;
-            }
-        };
-
-        // try!(conn.prepare("SELECT * FROM companies"));
-
-        // for row in try!(stmt.query(&[])) {
-        //     let name = row.get("name");
-        //     println!("Companies: {:?}", name);
-        // }
+        let names = database_querier::select_all_company_names(&conn);
+        assert_eq!(
+            names,
+            vec!["Panerai", "Rolex", "A. Lange & Sohne", "Audemars Piguet", "IWC Schaffhausen"]
+        );
     }
 
     fn before_each(conn: &Connection) {
