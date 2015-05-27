@@ -1,4 +1,5 @@
 use postgres::Connection;
+use type_printer;
 
 mod movements {
     pub fn all() -> Vec<String> {
@@ -129,4 +130,50 @@ pub fn seed_movements(conn: &Connection) {
     for calibre_id in movements::all() {
         insert_movement.execute(&[&calibre_id]).ok().expect("having trouble inserting a movement");
     }
+}
+
+pub fn associate_movements_and_watches(conn: &Connection) {
+    // I need to associate two rows of two different tables
+    //
+    // let first_movement = "1030".to_string();
+    // calibre_id
+
+    // let first_watch = ("6541".to_string(), 1958i16, "Milguass".to_string());
+    // reference_id
+
+    // so lets find the movement
+
+    let movement_query = match conn.prepare("SELECT * FROM movements WHERE calibre_id = '1030'") {
+        Ok(movement_query) => movement_query,
+        Err(e) => {
+            println!("couldn't find movement");
+            return;
+        }
+    };
+
+    let watch_query = match conn.prepare("SELECT * FROM watches WHERE name = 'Milguass'") {
+        Ok(watch_query) => watch_query,
+        Err(e) => {
+            println!("couldn't find watch");
+            return;
+        }
+    };
+
+    let movements = movement_query.query(&[]).ok().expect("dang it");
+    let movement = movements.iter().next().unwrap();
+    let movement_id: i32 = movement.get("id");
+
+    let watches = watch_query.query(&[]).ok().expect("dang it");
+    let watch = watches.iter().next().unwrap();
+    let watch_id: i32 = watch.get("id");
+
+    let movement_association = match conn.prepare("UPDATE watches SET movement_id=$1 WHERE id=$2") {
+        Ok(movement_association) => movement_association,
+        Err(e) => {
+            println!("could not associate watch and movement");
+            return;
+        }
+    };
+
+    movement_association.execute(&[&movement_id, &watch_id]).ok().expect("dang it");
 }
