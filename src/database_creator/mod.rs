@@ -39,7 +39,7 @@ pub fn create_movements_table(conn: &Connection) {
     conn.execute("
         CREATE TABLE IF NOT EXISTS movements (
             id SERIAL PRIMARY KEY,
-            calibre_id text
+            caliber text
         )
     ", &[]).ok().expect("could not create movements table");
 }

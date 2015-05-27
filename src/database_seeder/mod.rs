@@ -148,7 +148,7 @@ pub fn seed_watches(conn: &Connection) {
 }
 
 pub fn seed_movements(conn: &Connection) {
-    let insert_movement = match conn.prepare("INSERT INTO movements (calibre_id) VALUES ($1)") {
+    let insert_movement = match conn.prepare("INSERT INTO movements (caliber) VALUES ($1)") {
         Ok(insert_movement) => insert_movement,
         Err(e) => {
             println!("having trouble preparing to insert a movement");
@@ -156,8 +156,8 @@ pub fn seed_movements(conn: &Connection) {
         }
     };
 
-    for calibre_id in movements::all() {
-        insert_movement.execute(&[&calibre_id]).ok().expect("having trouble inserting a movement");
+    for caliber in movements::all() {
+        insert_movement.execute(&[&caliber]).ok().expect("having trouble inserting a movement");
     }
 }
 
@@ -173,15 +173,15 @@ pub fn associate_movements_and_watches(conn: &Connection) {
     ];
 
     for pair in watch_movement_pairs {
-        let (watch_name, movement_calibre_id) = pair;
-        let (watch_id, movement_id) = extract_watch_and_movement_ids(&conn, watch_name, movement_calibre_id);
+        let (watch_name, movement_caliber) = pair;
+        let (watch_id, movement_id) = extract_watch_and_movement_ids(&conn, watch_name, movement_caliber);
         add_movement_to_watch(&conn, movement_id, watch_id);
     }
 
 }
 
-fn extract_watch_and_movement_ids(conn: &Connection, watch_name: String, movement_calibre_id: String) -> (i32, i32) {
-    let movement_query = match conn.prepare("SELECT * FROM movements WHERE calibre_id = $1") {
+fn extract_watch_and_movement_ids(conn: &Connection, watch_name: String, movement_caliber: String) -> (i32, i32) {
+    let movement_query = match conn.prepare("SELECT * FROM movements WHERE caliber = $1") {
         Ok(movement_query) => movement_query,
         Err(e) => {
             println!("couldn't find movement");
@@ -197,7 +197,7 @@ fn extract_watch_and_movement_ids(conn: &Connection, watch_name: String, movemen
         }
     };
 
-    let movements = movement_query.query(&[&movement_calibre_id]).ok().expect("dang it");
+    let movements = movement_query.query(&[&movement_caliber]).ok().expect("dang it");
     let movement = movements.iter().next().unwrap();
     let movement_id: i32 = movement.get("id");
 

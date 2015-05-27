@@ -17,7 +17,17 @@ pub fn clear_watches(conn: &Connection) {
     conn.execute("DELETE FROM watches", &[]).ok().expect("could not delete watches");
 }
 
+pub fn drop_watches_table(conn: &Connection) {
+    // println!("Dropping watches table...");
+    conn.execute("DROP TABLE IF EXISTS watches", &[]).ok().expect("could not drop watches table");
+}
+
 pub fn clear_movements(conn: &Connection) {
     // println!("Deleting all movement...");
     conn.execute("DELETE FROM movements", &[]).ok().expect("could not delete movements");
+}
+
+pub fn drop_movements_table(conn: &Connection) {
+    // println!("Dropping movements table...");
+    conn.execute("DROP TABLE IF EXISTS movements", &[]).ok().expect("could not drop movements table");
 }
