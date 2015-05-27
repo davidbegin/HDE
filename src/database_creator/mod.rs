@@ -1,14 +1,8 @@
 use postgres::Connection;
 
-// Lets make some associations
-//
-// And many questions are raised
-//
-// manufacture is the same as company
-
 // Rust Postgres does not support the interval type yet
 // I should look into helping out,
-// although that is far beyond my knowledge for both categories
+// although that is far beyond my knowledge for both Rust and Postgres
 pub fn create_companies_table(conn: &Connection) {
     conn.execute("
         CREATE TABLE IF NOT EXISTS companies (
@@ -20,9 +14,6 @@ pub fn create_companies_table(conn: &Connection) {
 }
 
 pub fn create_watches_table(conn: &Connection) {
-    // FOREIGN KEY (book_id) REFERENCES books (id);
-    // product_no integer REFERENCES products (product_no),
-
     conn.execute("
         CREATE TABLE IF NOT EXISTS watches (
             id SERIAL PRIMARY KEY,
@@ -42,4 +33,17 @@ pub fn create_movements_table(conn: &Connection) {
             caliber text
         )
     ", &[]).ok().expect("could not create movements table");
+}
+
+pub fn add_company_id_to_watches(conn: &Connection) {
+    conn.execute("
+        ALTER TABLE watches
+          ADD COLUMN company_id integer
+    ", &[]).ok().expect("could not add company_id to watches");
+
+    conn.execute("
+        ALTER TABLE watches
+          ADD CONSTRAINT watches_company_id_fkey FOREIGN KEY (company_id)
+                  REFERENCES companies (id) MATCH SIMPLE
+    ", &[]).ok().expect("could not add company_id to watches");
 }
