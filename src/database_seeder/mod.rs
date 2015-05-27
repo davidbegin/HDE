@@ -8,6 +8,7 @@ mod movements {
         let third_movement = "L121.1".to_string();
         let fourth_movement = "52010".to_string();
         let fifth_movement = "3120".to_string();
+        let sixth_movement  = "3185".to_string();
 
         vec![
             first_movement,
@@ -15,6 +16,7 @@ mod movements {
             third_movement,
             fourth_movement,
             fifth_movement,
+            sixth_movement
         ]
     }
 }
@@ -72,12 +74,39 @@ mod watches {
             "Royal Oak Stainless Steel".to_string()
         );
 
+        let sixth_watch = (
+            "16710".to_string(),
+            1989,
+            "GMT Master II".to_string()
+        );
+
+        let seventh_watch = (
+            "16570".to_string(),
+            1989,
+            "Explorer II".to_string()
+        );
+
+        // I am still having trouble figuring out how to store watches
+        // it seems that this ref should be able to given a year
+        //
+        //
+        // Ref. 16710
+        // Production Period: 1989-2007
+        // Model Name: Rolex GMT Master II
+        // Caliber: 3185 (late models with 3186), 28800A/h, hacking, quickset (24-hour-hand)
+        // Pressure proof to 100m/330ft
+        // Bracelet: Oyster 78360 and 78790 (Oysterlock), Jubilé 62510
+        // Glass: Sapphire crystal
+        // Bezel: Anodized aluminum, 120 clicks
+
         vec![
             first_watch,
             second_watch,
             third_watch,
             fourth_watch,
-            fifth_watch
+            fifth_watch,
+            sixth_watch,
+            seventh_watch
         ]
     }
 }
@@ -138,7 +167,9 @@ pub fn associate_movements_and_watches(conn: &Connection) {
         ("Luminor 1950 10 Days Black Dial Ceramic Black".to_string(), "P.2003".to_string()),
         ("Portugieser Automatic".to_string(), "52010".to_string()),
         ("Royal Oak Stainless Steel".to_string(), "3120".to_string()),
-        ("Lange 1".to_string(), "L121.1".to_string())
+        ("Lange 1".to_string(), "L121.1".to_string()),
+        ("GMT Master II".to_string(), "3185".to_string()),
+        ("Explorer II".to_string(), "3185".to_string())
     ];
 
     for pair in watch_movement_pairs {
