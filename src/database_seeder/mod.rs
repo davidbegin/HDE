@@ -224,32 +224,47 @@ fn add_movement_to_watch(conn: &Connection, movement_id: i32, watch_id: i32) {
 pub fn seed_from_csv(conn: &Connection) {
     let mut reader = csv::Reader::from_file("./src/database_seeder/data/test_watch_data_1.csv").unwrap();
 
-    // so first I need to find or create the movement and return an i32 the movement id
-
-    let movement_id = find_or_create_movement(&conn, "3185".to_string());
-    println!("movement_id: {}", movement_id);
-
     for record in reader.decode() {
         let (name, reference, year, movement_name): (String, String, i16, String) = record.unwrap();
-        create_watch(&conn, name, reference, year);
+        let watch_id = create_watch(&conn, name, reference, year);
         let movement_id = find_or_create_movement(&conn, movement_name);
-        println!("movement_id: {}", movement_id);
+        add_movement_to_watch(conn, movement_id, watch_id);
     }
 }
 
-pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16) {
+pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16) -> i32 {
     let insert_watch = match conn
         .prepare("INSERT INTO watches (name, reference, year) VALUES ($1, $2, $3)") {
         Ok(insert_watch) => insert_watch,
         Err(e) => {
             println!("having trouble preparing to insert watch");
-            return;
+            return -1;
         }
     };
 
     insert_watch.execute(&[&name, &reference, &year])
         .ok()
         .expect("there was a problem inserting a watch");
+
+
+    // I need to first do this by timestamp,
+    // and then figure out a better solution
+    let find_watch = match conn.prepare("SELECT * FROM watches ORDER BY ID DESC LIMIT 1") {
+        Ok(v) => v,
+        Err(e) => {
+            println!("couldn't even prepare to select the last watch");
+            return -1;
+        }
+    };
+
+    let result = find_watch.query(&[]).ok().expect("could not find the watch");
+    let mut id = -1;
+
+    for row in result {
+        id = row.get("id");
+    }
+
+    id
 }
 
 fn find_or_create_movement(conn: &Connection, name: String) -> i32 {
