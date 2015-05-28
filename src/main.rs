@@ -38,15 +38,15 @@ fn main() {
     // database_seeder::seed_movements(&conn);
     // database_seeder::seed_watches(&conn);
     // database_seeder::associate_movements_and_watches(&conn);
-    database_seeder::seed_from_csv(&conn);
+    // database_seeder::seed_from_csv(&conn);
 
     // database_dumper::companies(&conn);
     // database_dumper::watches(&conn);
     // database_dumper::movements(&conn);
 
-    // database_querier::print_all_companies(&conn);
-    // database_querier::print_all_watches(&conn);
-    // database_querier::print_all_movements(&conn);
+    database_querier::print_all_companies(&conn);
+    database_querier::print_all_watches(&conn);
+    database_querier::print_all_movements(&conn);
 }
 
 fn title() {
