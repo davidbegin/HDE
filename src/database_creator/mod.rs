@@ -30,11 +30,14 @@ pub fn create_movements_table(conn: &Connection) {
     conn.execute("
         CREATE TABLE IF NOT EXISTS movements (
             id SERIAL PRIMARY KEY,
-            caliber text
+            caliber text UNIQUE
         )
     ", &[]).ok().expect("could not create movements table");
 }
 
+// I need to explore the best way to add foreign keys in postgres
+//
+// I think I am just naming the actual constraint watches_company_id_fkey
 pub fn add_company_id_to_watches(conn: &Connection) {
     conn.execute("
         ALTER TABLE watches

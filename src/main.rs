@@ -24,9 +24,9 @@ fn main() {
     // database_cleaner::clear_watches(&conn);
     // database_cleaner::clear_movements(&conn);
 
-    // database_cleaner::drop_companies_table(&conn);
-    // database_cleaner::drop_watches_table(&conn);
-    // database_cleaner::drop_movements_table(&conn);
+    database_cleaner::drop_companies_table(&conn);
+    database_cleaner::drop_watches_table(&conn);
+    database_cleaner::drop_movements_table(&conn);
 
     database_creator::create_companies_table(&conn);
     database_creator::create_movements_table(&conn);
