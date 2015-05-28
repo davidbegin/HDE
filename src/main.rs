@@ -60,6 +60,9 @@ fn csv_experiments() {
     let mut reader = csv::Reader::from_file("./src/database_seeder/data/test_watch_data_1.csv").unwrap();
 
     for record in reader.decode() {
-        let (s1, s2, dist): (String, String, usize) = record.unwrap();
+        let (name, reference_id, year, caliber_name): (String, String, String, String) = record.unwrap();
+        println!("name: {}, reference: {}, year: {}, caliber name: {}",
+            name, reference_id, year, caliber_name
+        );
     }
 }
