@@ -17,7 +17,7 @@ pub fn create_watches_table(conn: &Connection) {
     conn.execute("
         CREATE TABLE IF NOT EXISTS watches (
             id SERIAL PRIMARY KEY,
-            reference_id text,
+            reference text,
             year smallint,
             name TEXT,
             movement_id integer REFERENCES movements (id)

@@ -55,9 +55,9 @@ pub fn print_all_watches(conn: &Connection) {
     for row in result {
         let id: i32              = row.get("id");
         let name: String         = row.get("name");
-        let reference_id: String = row.get("reference_id");
+        let reference: String = row.get("reference");
         let year: i16            = row.get("year");
-        println!("Reference ID: {}", reference_id);
+        println!("Reference: {}", reference);
         println!("Name: {}", name);
         println!("Year: {}", year);
         println!("\n-------------------------------------\n");

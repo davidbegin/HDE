@@ -1,3 +1,4 @@
+extern crate csv;
 use postgres::Connection;
 use type_printer;
 
@@ -130,7 +131,7 @@ pub fn seed_companies(conn: &Connection) {
 }
 
 pub fn seed_watches(conn: &Connection) {
-    let insert_watch = match conn.prepare("INSERT INTO watches (reference_id, year, name) VALUES ($1, $2, $3)") {
+    let insert_watch = match conn.prepare("INSERT INTO watches (reference, year, name) VALUES ($1, $2, $3)") {
         Ok(insert_watch) => insert_watch,
         Err(e) => {
             println!("having trouble preparing to insert watch");
@@ -139,9 +140,9 @@ pub fn seed_watches(conn: &Connection) {
     };
 
     for watch in watches::all() {
-        let (reference_id, year, name) = watch;
+        let (reference, year, name) = watch;
 
-        insert_watch.execute(&[&reference_id, &year, &name])
+        insert_watch.execute(&[&reference, &year, &name])
             .ok()
             .expect("there was a problem inserting a watch");
     }
@@ -218,4 +219,28 @@ fn add_movement_to_watch(conn: &Connection, movement_id: i32, watch_id: i32) {
     };
 
     movement_association.execute(&[&movement_id, &watch_id]).ok().expect("dang it");
+}
+
+pub fn seed_from_csv(conn: &Connection) {
+    let mut reader = csv::Reader::from_file("./src/database_seeder/data/test_watch_data_1.csv").unwrap();
+
+    for record in reader.decode() {
+        let (name, reference, year, caliber_name): (String, String, i16, String) = record.unwrap();
+        create_watch(&conn, name, reference, year);
+    }
+}
+
+pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16) {
+    let insert_watch = match conn
+        .prepare("INSERT INTO watches (name, reference, year) VALUES ($1, $2, $3)") {
+        Ok(insert_watch) => insert_watch,
+        Err(e) => {
+            println!("having trouble preparing to insert watch");
+            return;
+        }
+    };
+
+    insert_watch.execute(&[&name, &reference, &year])
+        .ok()
+        .expect("there was a problem inserting a watch");
 }
