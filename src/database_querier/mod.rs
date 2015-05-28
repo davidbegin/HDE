@@ -78,8 +78,8 @@ pub fn print_all_movements(conn: &Connection) {
 
     for row in result {
         let id: i32 = row.get("id");
-        let caliber: String = row.get("caliber");
+        let name: String = row.get("name");
 
-        println!("Caliber: {:?}", caliber);
+        println!("Caliber: {:?}", name);
     }
 }

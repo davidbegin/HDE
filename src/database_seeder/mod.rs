@@ -149,7 +149,7 @@ pub fn seed_watches(conn: &Connection) {
 }
 
 pub fn seed_movements(conn: &Connection) {
-    let insert_movement = match conn.prepare("INSERT INTO movements (caliber) VALUES ($1)") {
+    let insert_movement = match conn.prepare("INSERT INTO movements (name) VALUES ($1)") {
         Ok(insert_movement) => insert_movement,
         Err(e) => {
             println!("having trouble preparing to insert a movement");
@@ -157,8 +157,8 @@ pub fn seed_movements(conn: &Connection) {
         }
     };
 
-    for caliber in movements::all() {
-        insert_movement.execute(&[&caliber]).ok().expect("having trouble inserting a movement");
+    for name in movements::all() {
+        insert_movement.execute(&[&name]).ok().expect("having trouble inserting a movement");
     }
 }
 
@@ -174,15 +174,15 @@ pub fn associate_movements_and_watches(conn: &Connection) {
     ];
 
     for pair in watch_movement_pairs {
-        let (watch_name, movement_caliber) = pair;
-        let (watch_id, movement_id) = extract_watch_and_movement_ids(&conn, watch_name, movement_caliber);
+        let (watch_name, movement_name) = pair;
+        let (watch_id, movement_id) = extract_watch_and_movement_ids(&conn, watch_name, movement_name);
         add_movement_to_watch(&conn, movement_id, watch_id);
     }
 
 }
 
-fn extract_watch_and_movement_ids(conn: &Connection, watch_name: String, movement_caliber: String) -> (i32, i32) {
-    let movement_query = match conn.prepare("SELECT * FROM movements WHERE caliber = $1") {
+fn extract_watch_and_movement_ids(conn: &Connection, watch_name: String, movement_name: String) -> (i32, i32) {
+    let movement_query = match conn.prepare("SELECT * FROM movements WHERE name = $1") {
         Ok(movement_query) => movement_query,
         Err(e) => {
             println!("couldn't find movement");
@@ -198,7 +198,7 @@ fn extract_watch_and_movement_ids(conn: &Connection, watch_name: String, movemen
         }
     };
 
-    let movements = movement_query.query(&[&movement_caliber]).ok().expect("dang it");
+    let movements = movement_query.query(&[&movement_name]).ok().expect("dang it");
     let movement = movements.iter().next().unwrap();
     let movement_id: i32 = movement.get("id");
 
@@ -224,9 +224,16 @@ fn add_movement_to_watch(conn: &Connection, movement_id: i32, watch_id: i32) {
 pub fn seed_from_csv(conn: &Connection) {
     let mut reader = csv::Reader::from_file("./src/database_seeder/data/test_watch_data_1.csv").unwrap();
 
+    // so first I need to find or create the movement and return an i32 the movement id
+
+    let movement_id = find_or_create_movement(&conn, "3185".to_string());
+    println!("movement_id: {}", movement_id);
+
     for record in reader.decode() {
-        let (name, reference, year, caliber_name): (String, String, i16, String) = record.unwrap();
+        let (name, reference, year, movement_name): (String, String, i16, String) = record.unwrap();
         create_watch(&conn, name, reference, year);
+        let movement_id = find_or_create_movement(&conn, movement_name);
+        println!("movement_id: {}", movement_id);
     }
 }
 
@@ -243,4 +250,41 @@ pub fn create_watch(conn: &Connection, name: String, reference: String, year: i1
     insert_watch.execute(&[&name, &reference, &year])
         .ok()
         .expect("there was a problem inserting a watch");
+}
+
+fn find_or_create_movement(conn: &Connection, name: String) -> i32 {
+    let find_movement = match conn.prepare("SELECT * FROM movements WHERE name = $1") {
+        Ok(v) => v,
+        Err(e) => {
+            println!("could not prepare to find movement");
+            return -1;
+        }
+    };
+
+    let result = find_movement.query(&[&name]).ok().expect("could not find movement");
+    let mut id: i32 = -1;
+
+    for row in result {
+        id = row.get("id");
+    }
+
+    if id > 0 {
+        return id;
+    } else {
+        return create_movement(&conn, name);
+    }
+}
+
+fn create_movement(conn: &Connection, name: String) -> i32 {
+    let create_movement = match conn.prepare("INSERT INTO movements (name) VALUES ($1)") {
+        Ok(v) => v,
+        Err(e) => {
+            println!("could not prepare to create movement");
+            return -1;
+        }
+    };
+
+    let result = create_movement.execute(&[&name]).ok().expect("could not create movement");
+    let id = find_or_create_movement(conn, name);
+    id
 }
