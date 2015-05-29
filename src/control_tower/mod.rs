@@ -14,8 +14,8 @@ pub fn title() {
 }
 
 pub fn clear(conn: &Connection) {
-    database_cleaner::clear_companies(&conn);
     database_cleaner::clear_watches(&conn);
+    database_cleaner::clear_companies(&conn);
     database_cleaner::clear_movements(&conn);
 }
 
@@ -33,10 +33,10 @@ pub fn create_tables(conn: &Connection) {
 }
 
 pub fn seed_database(conn: &Connection) {
-    database_seeder::seed_companies(&conn);
-    database_seeder::seed_movements(&conn);
-    database_seeder::seed_watches(&conn);
-    database_seeder::associate_movements_and_watches(&conn);
+    // database_seeder::seed_companies(&conn);
+    // database_seeder::seed_movements(&conn);
+    // database_seeder::seed_watches(&conn);
+    // database_seeder::associate_movements_and_watches(&conn);
     database_seeder::seed_from_csv(&conn);
 }
 
