@@ -118,17 +118,33 @@ fn add_movement_to_watch(conn: &Connection, movement_id: i32, watch_id: i32) {
 pub fn seed_from_csv(conn: &Connection) {
     let mut reader = csv::Reader::from_file("./src/database_seeder/data/test_watch_data_1.csv").unwrap();
 
+    let rolex_id_query = match conn.prepare("SELECT * FROM companies WHERE name ~* 'rolex'") {
+      Ok(v) => v,
+      Err(e) => {
+        return;
+      }
+    };
+
+    let query_rows = rolex_id_query.query(&[]).ok().expect("darnit");
+    let mut rolex_id: i32 = -1;
+
+    for row in query_rows {
+      rolex_id = row.get("id");
+    }
+
+    println!("Rolex id: {}", rolex_id);
+
     for record in reader.decode() {
         let (name, reference, year, movement_name): (String, String, i16, String) = record.unwrap();
-        let watch_id = create_watch(&conn, name, reference, year);
+        let watch_id = create_watch(&conn, name, reference, year, rolex_id);
         let movement_id = find_or_create_movement(&conn, movement_name);
         add_movement_to_watch(conn, movement_id, watch_id);
     }
 }
 
-pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16) -> i32 {
+pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16, company_id: i32) -> i32 {
     let insert_watch = match conn
-        .prepare("INSERT INTO watches (name, reference, year) VALUES ($1, $2, $3)") {
+        .prepare("INSERT INTO watches (name, reference, year, company_id) VALUES ($1, $2, $3, $4)") {
         Ok(insert_watch) => insert_watch,
         Err(e) => {
             println!("having trouble preparing to insert watch");
@@ -136,7 +152,7 @@ pub fn create_watch(conn: &Connection, name: String, reference: String, year: i1
         }
     };
 
-    insert_watch.execute(&[&name, &reference, &year])
+    insert_watch.execute(&[&name, &reference, &year, &company_id])
         .ok()
         .expect("there was a problem inserting a watch");
 
