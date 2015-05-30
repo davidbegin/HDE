@@ -5,7 +5,7 @@ mod static_seeder;
 use config;
 
 pub fn seed_from_csv(conn: &Connection) {
-    let mut reader = csv::Reader::from_file("./src/database_seeder/data/test_watch_data_1.csv").unwrap();
+    let mut reader = csv::Reader::from_file("./src/database_seeder/data/2015_rolex.csv").unwrap();
 
     let rolex_id = rolex_finder(&conn);
 
