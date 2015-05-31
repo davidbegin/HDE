@@ -163,6 +163,17 @@ mod tests {
         assert_eq!(company_count(&conn), 0);
     }
 
+    #[test]
+    fn i_can_create_a_company_and_then_assert_it_exists() {
+        let conn = before_each();
+
+        conn.execute("INSERT INTO companies (name) VALUES ('Arnold and Son')", &[])
+            .ok()
+            .expect("darn I though I had it");
+
+        assert_eq!(company_count(&conn), 1);
+    }
+
     fn before_each() -> Connection{
         let conn = config::database_connection().unwrap();
         database_cleaner::clear_companies(&conn);
