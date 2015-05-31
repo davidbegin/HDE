@@ -158,21 +158,15 @@ mod tests {
 
     #[test]
     fn it_returns_0_when_the_db_is_cleaned() {
-        let conn = match config::database_connection() {
-            Some(conn) => conn,
-            None => {
-                println!("Looks like we got a nil connection");
-                return;
-            }
-        };
-
-        before_each(&conn);
+        let conn = before_each();
 
         assert_eq!(company_count(&conn), 0);
     }
 
-    fn before_each(conn: &Connection) {
+    fn before_each() -> Connection{
+        let conn = config::database_connection().unwrap();
         database_cleaner::clear_companies(&conn);
+        conn
     }
 }
 
