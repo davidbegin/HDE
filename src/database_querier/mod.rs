@@ -151,11 +151,13 @@ fn company_count(conn: &Connection) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::company_count;
+    use postgres::Connection;
     use config;
+    use database_cleaner;
+    use database_cleaner::clear_companies;
 
     #[test]
     fn it_returns_0_when_the_db_is_cleaned() {
-
         let conn = match config::database_connection() {
             Some(conn) => conn,
             None => {
@@ -164,14 +166,19 @@ mod tests {
             }
         };
 
-        // clear the companies
-        assert_eq!(company_count(&conn), 1);
+        before_each(&conn);
+
+        assert_eq!(company_count(&conn), 0);
+    }
+
+    fn before_each(conn: &Connection) {
+        database_cleaner::clear_companies(&conn);
     }
 }
 
 fn pp<T>(strang: &T) {
   // Can I look for an environment variable here?
-  println!("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-  type_printer::print_type_of(strang);
-  println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+  // println!("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  // type_printer::print_type_of(strang);
+  // println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }

@@ -3,6 +3,10 @@ use postgres::Connection;
 // TODO: add a verbose mode
 
 pub fn clear_companies(conn: &Connection) {
+    conn.execute("UPDATE watches SET company_id = null", &[])
+        .ok()
+        .expect("could not delete company_id references");
+
     // println!("Deleting all companies...");
     conn.execute("DELETE FROM companies CASCADE", &[])
         .ok()
