@@ -83,3 +83,41 @@ pub fn print_all_movements(conn: &Connection) {
         println!("Caliber: {:?}", name);
     }
 }
+
+// So I want this to return a result, so I can use
+// try to propogate up
+fn select_all_companies_2() -> Result<String, String> {
+    // Ok("Dummy Data".to_string())
+    Err("Dummy Data".to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::select_all_companies_2;
+
+    // #[test]
+    // fn select_all_companies_2_returns_a_result() {
+    //     assert_eq!(select_all_companies_2().unwrap(), "Dummy Data");
+    // }
+
+    // This will not work, becuase expect(propagates the error)
+    // #[test]
+    // fn select_all_companies_2_returns_a_result() {
+    //     assert_eq!(
+    //         select_all_companies_2().ok().expect("Dummy Data"),
+    //         "Dummy Data"
+    //     );
+    // }
+
+    // so how can I work with Err, when asserting
+    #[test]
+    fn errors_can_matched_and_asserted_against() {
+        let matched_error = match select_all_companies_2() {
+            Ok(e) => e,
+            Err(e) => "Rescued Error Data".to_string()
+        };
+
+        assert_eq!(matched_error, "Rescued Error Data");
+    }
+
+}

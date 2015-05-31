@@ -154,8 +154,6 @@ fn it_is_real() {
     // I want to delete all delete all watches
     //
     // I then want to assert there are no watches
-    //
-    // lets start with an assertion
 
     let conn = match config::database_connection() {
         Some(conn) => conn,
@@ -172,50 +170,5 @@ fn it_is_real() {
         }
     };
 
-    // hey we expected a (), but got a result, ut uh
-    // do we need to unwrap??
-    //
-    // now we expected a statment, but found a result?
-    //
-    // we keep getting a result
-    //
-    // I think try wansts a result!
-    //
-    // why is prepare not returning a result
-    //
-    // should I try execute
-
-
-    // expected `postgres::Statement<'_>`,
-    // found `core::result::Result<_, _>``'`
-    // let company_count_2 = try!(conn.prepare("SELECT count(*) FROM companies").unwrap());
-
-    // expected `()`,
-    // found `core::result::Result<_, _>`
-    // let company_count_2 = try!(conn.prepare("SELECT count(*) FROM companies"));
-    // let company_count_2 = try!(conn.prepare("SELECT count(*) FROM companies"));
-
-    // so try! expects a result
-
-    // what does prepare return?
-
-
-
-
-
-     // expected `()`,
-     //     found `core::result::Result<_, _>`
-
-    // let rows = company_count.query(&[]).ok().expect("woah you cant see compamy count result!");
-    // let stmt = try!(conn.prepare(query));
-    // //
-    // let rows = try!(company_count.query(&[]));
-    // return;
-        // .ok().expect("woah you cant see compamy count result!");
-
-
-    // let row = try!(rows.next().ok_or(Error::BadData));
-    // let row = try!(rows.next().ok_or("ok"));
-    // assert_eq!(true, company_count_result.first());
-
+    let rows = company_count.query(&[]).ok().expect("could not select the company count");
 }
