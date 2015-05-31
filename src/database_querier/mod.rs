@@ -148,6 +148,45 @@ fn company_count(conn: &Connection) -> i32 {
     count as i32
 }
 
+fn watches_by_company(conn: &Connection, company_name: String) -> i32 {
+    // So I need to find all the watches for a company
+
+    // first lets get the company id for the company
+
+    let find_company = conn.prepare("SELECT * FROM companies WHERE name = $1")
+        .ok()
+        .expect("could not prepare to select company");
+
+
+    let mut rows = find_company.query(&[&company_name])
+        .ok()
+        .expect("could not select company");
+
+    // if we unwrap this and its none, we want to return 0
+
+    let company = match rows.iter().next() {
+        Some(company) => company,
+        None => {
+            return 0;
+        }
+    };
+
+    let company_id: i32 = company.get("id");
+
+    let find_watches_for_company_query = conn
+        .prepare("SELECT * FROM watches WHERE company_id = $1")
+        .ok()
+        .expect("could not prepare to find the watches for said company");
+
+    let mut rows = find_watches_for_company_query.query(&[&company_id])
+        .ok()
+        .expect("could not find watches");
+
+    let watch_count = rows.iter().len();
+    watch_count as i32
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::company_count;
@@ -155,8 +194,9 @@ mod tests {
     use config;
     use database_cleaner;
     use database_cleaner::clear_companies;
+    use super::watches_by_company;
 
-    #[test]
+    // #[test]
     fn it_returns_0_when_the_db_is_cleaned() {
         let conn = before_each();
 
@@ -174,11 +214,57 @@ mod tests {
         assert_eq!(company_count(&conn), 1);
     }
 
+    // So now lets tdd some useful functions for quering watches!
+
+    // so first by company
+
+    // also I want to try and use Structs and impl to make
+    // to make it all ORMy ... because you know, I'm a ruby programming
+    // running to any and all comforts
+    #[test]
+    fn watches_by_company_returns_the_number_watches_for_a_company() {
+        let conn = before_each();
+
+        let rolex_count = watches_by_company(&conn, "Rolex".to_string());
+        assert_eq!(rolex_count, 0);
+    }
+
+    #[test]
+    fn watches_by_company_2() {
+        let conn = before_each();
+
+        conn.execute("INSERT INTO companies (name) VALUES ('Rolex')", &[])
+            .ok()
+            .expect("could not insert into companies");
+
+        let rolex_count = watches_by_company(&conn, "Rolex".to_string());
+        assert_eq!(rolex_count, 0);
+        before_each();
+    }
+
+    #[test]
+    fn watches_by_company_3() {
+        let conn = before_each();
+        conn.execute("INSERT INTO companies (name) VALUES ('Rolex')", &[])
+            .ok()
+            .expect("could not insert into companies");
+
+        let rolex_count = watches_by_company(&conn, "Rolex".to_string());
+        assert_eq!(rolex_count, 0);
+        before_each();
+    }
+
     fn before_each() -> Connection{
         let conn = config::database_connection().unwrap();
         database_cleaner::clear_companies(&conn);
         conn
     }
+}
+
+fn fpp<T>(strang: &T) {
+  println!("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  type_printer::print_type_of(strang);
+  println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
 fn pp<T>(strang: &T) {

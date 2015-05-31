@@ -1,4 +1,4 @@
-#![allow(unused_imports, unused_variables, dead_code)]
+#![allow(unused_imports, unused_variables, dead_code, unused_mut)]
 
 extern crate postgres;
 extern crate type_printer;
