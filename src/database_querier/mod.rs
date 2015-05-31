@@ -203,7 +203,7 @@ mod tests {
         assert_eq!(company_count(&conn), 0);
     }
 
-    #[test]
+    // #[test]
     fn i_can_create_a_company_and_then_assert_it_exists() {
         let conn = before_each();
 
@@ -221,7 +221,7 @@ mod tests {
     // also I want to try and use Structs and impl to make
     // to make it all ORMy ... because you know, I'm a ruby programming
     // running to any and all comforts
-    #[test]
+    // #[test]
     fn watches_by_company_returns_the_number_watches_for_a_company() {
         let conn = before_each();
 
@@ -229,7 +229,7 @@ mod tests {
         assert_eq!(rolex_count, 0);
     }
 
-    #[test]
+    // #[test]
     fn watches_by_company_2() {
         let conn = before_each();
 
@@ -245,12 +245,17 @@ mod tests {
     #[test]
     fn watches_by_company_3() {
         let conn = before_each();
-        conn.execute("INSERT INTO companies (name) VALUES ('Rolex')", &[])
+
+        conn.execute("INSERT INTO companies (id, name) VALUES (1, 'Rolex')", &[])
             .ok()
             .expect("could not insert into companies");
 
+        conn.execute("INSERT INTO watches (name, company_id) VALUES ('Aquatimer', 1)", &[])
+            .ok()
+            .expect("could not insert into watches");
+
         let rolex_count = watches_by_company(&conn, "Rolex".to_string());
-        assert_eq!(rolex_count, 0);
+        assert_eq!(rolex_count, 1);
         before_each();
     }
 
