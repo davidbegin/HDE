@@ -7,3 +7,6 @@ authors = ["David Begin <davidmichaelbe@gmail.com>"]
 type_printer = "*"
 postgres = "*"
 csv = "*"
+
+[dependencies.clippy]
+git = "https://github.com/Manishearth/rust-clippy"

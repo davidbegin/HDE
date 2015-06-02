@@ -2,6 +2,7 @@
 name = "hde"
 version = "0.1.0"
 dependencies = [
+ "clippy 0.0.4 (git+https://github.com/Manishearth/rust-clippy)",
  "csv 0.14.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres 0.8.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "type_printer 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -21,6 +22,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "byteorder"
 version = "0.3.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "clippy"
+version = "0.0.4"
+source = "git+https://github.com/Manishearth/rust-clippy#3557d62ee919dc544d74ba23c8574ead448a40d5"
 
 [[package]]
 name = "csv"

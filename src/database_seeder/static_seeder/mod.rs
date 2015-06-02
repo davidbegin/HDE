@@ -55,13 +55,13 @@ pub fn seed_movements(conn: &Connection) {
 
 pub fn associate_movements_and_watches(conn: &Connection) {
     let watch_movement_pairs = vec![
-        ("Milguass".to_string(), "1030".to_string()),
-        ("Luminor 1950 10 Days Black Dial Ceramic Black".to_string(), "P.2003".to_string()),
-        ("Portugieser Automatic".to_string(), "52010".to_string()),
-        ("Royal Oak Stainless Steel".to_string(), "3120".to_string()),
-        ("Lange 1".to_string(), "L121.1".to_string()),
-        ("GMT Master II".to_string(), "3185".to_string()),
-        ("Explorer II".to_string(), "3185".to_string())
+        ("Milguass".to_owned(), "1030".to_owned()),
+        ("Luminor 1950 10 Days Black Dial Ceramic Black".to_owned(), "P.2003".to_owned()),
+        ("Portugieser Automatic".to_owned(), "52010".to_owned()),
+        ("Royal Oak Stainless Steel".to_owned(), "3120".to_owned()),
+        ("Lange 1".to_owned(), "L121.1".to_owned()),
+        ("GMT Master II".to_owned(), "3185".to_owned()),
+        ("Explorer II".to_owned(), "3185".to_owned())
     ];
 
     for pair in watch_movement_pairs {

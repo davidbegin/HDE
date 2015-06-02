@@ -102,7 +102,7 @@ fn add_movement_to_watch(conn: &Connection, movement_id: i32, watch_id: i32) {
 }
 
 fn rolex_creator(conn: &Connection) -> i32 {
-    let create_rolex_stmt = match conn.execute("INSERT INTO companies (name) VALUES ($1)", &[&"Rolex".to_string()]) {
+    let create_rolex_stmt = match conn.execute("INSERT INTO companies (name) VALUES ($1)", &[&"Rolex".to_owned()]) {
         Ok(v) => v,
         Err(e) => {
             return -1;

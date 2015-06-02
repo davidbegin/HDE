@@ -1,5 +1,8 @@
 #![allow(unused_imports, unused_variables, dead_code, unused_mut)]
 
+#![feature(plugin)]
+#![plugin(clippy)]
+
 extern crate postgres;
 extern crate type_printer;
 extern crate csv;
