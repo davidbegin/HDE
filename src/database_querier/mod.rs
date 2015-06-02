@@ -189,6 +189,7 @@ fn watches_by_company(conn: &Connection, company_name: String) -> i32 {
 
 #[cfg(test)]
 mod tests {
+    use super::fpp;
     use super::company_count;
     use postgres::Connection;
     use config;
@@ -229,40 +230,59 @@ mod tests {
         assert_eq!(rolex_count, 0);
     }
 
-    // #[test]
-    fn watches_by_company_2() {
+    #[test]
+    fn watches_by_company_returns_0_for_a_new_company() {
         let conn = before_each();
 
-        conn.execute("INSERT INTO companies (name) VALUES ('Rolex')", &[])
-            .ok()
-            .expect("could not insert into companies");
+        // INSERT into watches (name) VALUES ('Rolex');
+        let x = conn.execute("INSERT INTO companies (name) VALUES ('Rolex')", &[]);
+
+        fpp(&x);
+        // core::result::Result<u64, postgres::error::Error>
+
+        match x {
+          Ok(good_stuff) => {
+            println!("it all good: {:?}", good_stuff);
+          },
+          Err(e) => {
+            println!("it all BAD: {:?}", e);
+          }
+        };
 
         let rolex_count = watches_by_company(&conn, "Rolex".to_string());
         assert_eq!(rolex_count, 0);
-        before_each();
+
+        after_each(conn);
     }
 
     #[test]
-    fn watches_by_company_3() {
+    fn find_by_company_works_for_a_single_company() {
         let conn = before_each();
 
         conn.execute("INSERT INTO companies (id, name) VALUES (1, 'Rolex')", &[])
             .ok()
             .expect("could not insert into companies");
 
-        conn.execute("INSERT INTO watches (name, company_id) VALUES ('Aquatimer', 1)", &[])
+        conn.execute("INSERT INTO watches (name, company_id) VALUES ('Air Lion', 1)", &[])
             .ok()
             .expect("could not insert into watches");
 
         let rolex_count = watches_by_company(&conn, "Rolex".to_string());
         assert_eq!(rolex_count, 1);
-        before_each();
+
+        after_each(conn);
     }
 
     fn before_each() -> Connection{
         let conn = config::database_connection().unwrap();
-        database_cleaner::clear_companies(&conn);
+        database_cleaner::fresh_database(&conn);
+        // database_cleaner::clear_companies(&conn);
         conn
+    }
+
+    fn after_each(conn: Connection) {
+      database_cleaner::fresh_database(&conn);
+      conn.finish();
     }
 }
 

@@ -2,6 +2,25 @@ use postgres::Connection;
 
 // TODO: add a verbose mode
 
+pub fn fresh_database(conn: &Connection) {
+    conn.execute("DELETE FROM watches", &[])
+        .ok()
+        .expect("could not delete watches");
+
+    match conn.execute("TRUNCATE companies CASCADE", &[]) {
+        Ok(ok) => {
+            println!("truncated companies successfully")
+        },
+        Err(e) => {
+            println!("could not companies truncate because of: {:?}", e)
+        }
+    };
+
+    conn.execute("DELETE FROM movements", &[])
+        .ok()
+        .expect("could not delete movemnets");
+}
+
 pub fn clear_companies(conn: &Connection) {
     conn.execute("UPDATE watches SET company_id = null", &[])
         .ok()
