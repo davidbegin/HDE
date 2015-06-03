@@ -47,19 +47,35 @@ fn main() {
 }
 
 fn time_to_try_to_summon_the_ghost_of_oo() {
-    println!("Lets make a watch struct");
-    let watch1: Watch = Watch {
-        name: "Milguass".to_owned()
-    };
+    let watch1 = Watch::new("Millguass".to_owned());
     println!("My first Watch struct: {:?}", watch1);
+    Watch::klass();
 }
 
 struct Watch {
     name: String
 }
 
+impl Watch {
+    fn klass() {
+        println!("class: Watch");
+    }
+
+     fn new(name: String) -> Watch{
+         Watch {
+             name: name
+         }
+     }
+}
+
 impl fmt::Debug for Watch{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Watch: {}", self.name)
+    }
+}
+
+impl Drop for Watch {
+    fn drop(&mut self) {
+        println!("Watch {} deallocated", self.name);
     }
 }
