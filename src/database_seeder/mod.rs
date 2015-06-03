@@ -18,38 +18,14 @@ pub fn seed_from_csv(conn: &Connection) {
 }
 
 pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16, company_id: i32) -> i32 {
-    let insert_watch = match conn
-        .prepare("INSERT INTO watches (name, reference, year, company_id) VALUES ($1, $2, $3, $4)") {
-        Ok(insert_watch) => insert_watch,
-        Err(e) => {
-            println!("having trouble preparing to insert watch");
-            return -1;
-        }
-    };
-
-    insert_watch.execute(&[&name, &reference, &year, &company_id])
+    conn
+        .prepare("INSERT INTO watches (name, reference, year, company_id) VALUES ($1, $2, $3, $4) RETURNING id")
         .ok()
-        .expect("there was a problem inserting a watch");
-
-
-    // I need to first do this by timestamp,
-    // and then figure out a better solution
-    let find_watch = match conn.prepare("SELECT * FROM watches ORDER BY ID DESC LIMIT 1") {
-        Ok(v) => v,
-        Err(e) => {
-            println!("couldn't even prepare to select the last watch");
-            return -1;
-        }
-    };
-
-    let result = find_watch.query(&[]).ok().expect("could not find the watch");
-    let mut id = -1;
-
-    for row in result {
-        id = row.get("id");
-    }
-
-    id
+        .expect("there was a problem preparing to insert a watch")
+        .query(&[&name, &reference, &year, &company_id])
+        .ok()
+        .expect("there was a problem inserting a watch")
+        .iter().next().unwrap().get("id")
 }
 
 fn find_or_create_movement(conn: &Connection, name: String) -> i32 {

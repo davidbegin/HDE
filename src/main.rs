@@ -40,7 +40,7 @@ fn main() {
     // control_tower::clear(&conn);
     // control_tower::drop_tables(&conn);
     // control_tower::create_tables(&conn);
-    // control_tower::seed_database(&conn);
+    control_tower::seed_database(&conn);
     // control_tower::copy_database(&conn);
     // control_tower::blue_angels(&conn);
     time_to_try_to_summon_the_ghost_of_oo();
