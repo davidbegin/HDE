@@ -10,6 +10,6 @@ TODO:
   13. add 2015 IWC watches and some sort of new column,
       maybe start breaking down colors,
       figuring out a variation system
-
-  Watch
-  Variation
+  X 14. I need to add a test framework I think too (FAIL!)
+  15. implement Watch struct
+     a. and drop to watch its lifetime

@@ -1,4 +1,11 @@
-#![allow(unused_imports, unused_variables, dead_code, unused_mut)]
+#![allow(
+    unused_imports,
+    unused_variables,
+    dead_code,
+    unused_mut,
+    unused_must_use
+    )
+]
 
 #![feature(plugin)]
 #![plugin(clippy)]
@@ -17,6 +24,7 @@ mod tests;
 mod control_tower;
 use postgres::{Connection, Error, FromSql, SslMode};
 use postgres::Result as PgResult;
+use std::fmt;
 
 fn main() {
     control_tower::title();
@@ -35,4 +43,23 @@ fn main() {
     // control_tower::seed_database(&conn);
     // control_tower::copy_database(&conn);
     // control_tower::blue_angels(&conn);
+    time_to_try_to_summon_the_ghost_of_oo();
+}
+
+fn time_to_try_to_summon_the_ghost_of_oo() {
+    println!("Lets make a watch struct");
+    let watch1: Watch = Watch {
+        name: "Milguass".to_owned()
+    };
+    println!("My first Watch struct: {:?}", watch1);
+}
+
+struct Watch {
+    name: String
+}
+
+impl fmt::Debug for Watch{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Watch: {}", self.name)
+    }
 }
