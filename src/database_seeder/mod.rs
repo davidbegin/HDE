@@ -96,32 +96,18 @@ fn rolex_finder(conn: &Connection) -> i32 {
       }
     };
 
-    let mut rolex_id: i32 = -1;
-
-    let query_rows = rolex_id_query.query(&[]).ok().expect("darnit");
-
-    for row in query_rows {
-      rolex_id = row.get("id");
-    }
-
-    if rolex_id < 0 {
-        rolex_creator(&conn);
-        rolex_finder(&conn)
-    } else {
-        rolex_id
-    }
+    rolex_id_query
+        .query(&[])
+        .ok()
+        .expect("darnit")
+        .iter()
+        .next()
+        .unwrap()
+        .get("id")
 }
 
 
 
-
-// So lets learn a better way to to handle finding_or_creating a record
-//
-// lets get some tests in place
-//
-// and try and learn some more about rust
-//
-// ...then more watches to the database!
 
 #[test]
 fn it_is_real() {
