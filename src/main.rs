@@ -43,7 +43,7 @@ fn main() {
     control_tower::seed_database(&conn);
     // control_tower::copy_database(&conn);
     // control_tower::blue_angels(&conn);
-    time_to_try_to_summon_the_ghost_of_oo();
+    // time_to_try_to_summon_the_ghost_of_oo();
 }
 
 fn time_to_try_to_summon_the_ghost_of_oo() {

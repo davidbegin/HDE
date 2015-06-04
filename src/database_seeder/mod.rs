@@ -18,14 +18,12 @@ pub fn seed_from_csv(conn: &Connection) {
 }
 
 pub fn create_watch(conn: &Connection, name: String, reference: String, year: i16, company_id: i32) -> i32 {
-    conn
-        .prepare("INSERT INTO watches (name, reference, year, company_id) VALUES ($1, $2, $3, $4) RETURNING id")
-        .ok()
-        .expect("there was a problem preparing to insert a watch")
-        .query(&[&name, &reference, &year, &company_id])
-        .ok()
-        .expect("there was a problem inserting a watch")
-        .iter().next().unwrap().get("id")
+    let stmt = conn.prepare("INSERT INTO watches (name, reference, year, company_id) VALUES ($1, $2, $3, $4) RETURNING id")
+        .ok().expect("there was a problem preparing to insert a watch");
+
+    let result = stmt.query(&[&name, &reference, &year, &company_id]).ok().expect("there was a problem inserting a watch");
+
+    result.iter().next().unwrap().get("id")
 }
 
 fn find_or_create_movement(conn: &Connection, name: String) -> i32 {
@@ -96,14 +94,14 @@ fn rolex_finder(conn: &Connection) -> i32 {
       }
     };
 
-    rolex_id_query
-        .query(&[])
-        .ok()
-        .expect("darnit")
-        .iter()
-        .next()
-        .unwrap()
-        .get("id")
+    let id: i32 = match rolex_id_query.query(&[]).ok().expect("darnit").iter().next() {
+        Some(e) => e.get("id"),
+        None => {
+            return -1;
+        }
+    };
+
+    id
 }
 
 
